@@ -4,166 +4,429 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>{{SITE_TITLE}}</title>
+    <meta name="description" content="{{SITE_DESCRIPTION}}">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
     <style>
+        :root {
+            --bg: #050505;
+            --panel: #0c0c0f;
+            --panel2: #111116;
+            --red: #ff1838;
+            --red2: #ff3b57;
+            --text: #ffffff;
+            --muted: #9b9ba3;
+            --line: rgba(255,255,255,.08);
+        }
+
+        * { box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
         body {
-            background-color: black;
-            color: red;
+            margin: 0;
             min-height: 100vh;
+            background:
+                radial-gradient(circle at 20% 5%, rgba(255,24,56,.14), transparent 420px),
+                radial-gradient(circle at 90% 10%, rgba(255,24,56,.08), transparent 320px),
+                var(--bg);
+            color: var(--text);
+            font-family: Inter, Arial, Helvetica, sans-serif;
         }
 
-        header {
-            color: red;
+        a { text-decoration: none; }
+
+        /* NAVBAR */
+        .site-nav {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(7,7,9,.88);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--line);
         }
 
-        .img-fluid {
-            max-width: 500px;
-            max-height: 500px;
-            width: 100%;
-            height: auto;
-            border-radius: 10px;
+        .navbar-brand {
+            font-size: 1.35rem;
+            font-weight: 900;
+            letter-spacing: -.03em;
+            color: #fff !important;
         }
 
-        .video-card {
-            background: #101010;
-            border: 1px solid #2a2a2a;
-            border-radius: 14px;
-            padding: 14px;
-            height: 100%;
+        .navbar-brand span { color: var(--red); }
+
+        .nav-link {
+            color: #d8d8de !important;
+            font-weight: 600;
+            margin-left: 10px;
+            transition: .2s;
         }
 
-        .btn-play {
-            font-weight: 700;
-        }
+        .nav-link:hover { color: var(--red) !important; }
 
-        .native-ad-wrap {
-            margin: 28px auto;
-            padding: 14px;
-            max-width: 1100px;
+        /* HERO */
+        .hero {
+            padding: 64px 0 30px;
             text-align: center;
         }
 
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            border: 1px solid rgba(255,24,56,.28);
+            background: rgba(255,24,56,.08);
+            color: #ff8ca0;
+            border-radius: 999px;
+            font-size: .78rem;
+            font-weight: 800;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+        }
+
+        .hero h1 {
+            margin: 20px auto 12px;
+            max-width: 900px;
+            font-size: clamp(2rem, 5vw, 4.2rem);
+            font-weight: 900;
+            letter-spacing: -.055em;
+            line-height: 1;
+        }
+
+        .hero h1 span { color: var(--red); }
+
+        .hero p {
+            margin: 0 auto;
+            max-width: 680px;
+            color: var(--muted);
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+
+        .section-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: end;
+            gap: 15px;
+            margin-bottom: 18px;
+        }
+
+        .section-title h2 {
+            margin: 0;
+            font-size: 1.35rem;
+            font-weight: 850;
+        }
+
+        .section-title small { color: var(--muted); }
+
+        /* VIDEO CARDS */
+        .video-card {
+            height: 100%;
+            overflow: hidden;
+            background: linear-gradient(180deg, var(--panel2), var(--panel));
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            box-shadow: 0 18px 50px rgba(0,0,0,.26);
+            transition: transform .2s ease, border-color .2s ease;
+        }
+
+        .video-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255,24,56,.35);
+        }
+
+        .thumb-wrap {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16/10;
+            overflow: hidden;
+            background: #15151a;
+        }
+
+        .thumb-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform .25s ease;
+        }
+
+        .video-card:hover .thumb-wrap img {
+            transform: scale(1.035);
+        }
+
+        .play-overlay {
+            position: absolute;
+            inset: 0;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,.25));
+        }
+
+        .play-circle {
+            width: 62px;
+            height: 62px;
+            display: grid;
+            place-items: center;
+            border-radius: 999px;
+            color: white;
+            background: rgba(255,24,56,.94);
+            box-shadow: 0 10px 30px rgba(255,24,56,.32);
+            font-size: 1.15rem;
+        }
+
+        .card-content { padding: 17px; }
+
+        .video-label {
+            font-size: .72rem;
+            color: #ff9bad;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .07em;
+            margin-bottom: 8px;
+        }
+
+        .video-title {
+            font-size: 1.02rem;
+            line-height: 1.35;
+            font-weight: 800;
+            color: #fff;
+            margin: 0 0 12px;
+        }
+
+        .video-meta {
+            color: var(--muted);
+            font-size: .78rem;
+            margin-bottom: 14px;
+        }
+
+        .btn-watch {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 9px;
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 12px;
+            color: #fff;
+            background: linear-gradient(135deg, var(--red), var(--red2));
+            font-weight: 850;
+            border: 0;
+            box-shadow: 0 12px 28px rgba(255,24,56,.20);
+            transition: .2s;
+        }
+
+        .btn-watch:hover {
+            color: #fff;
+            transform: translateY(-1px);
+            filter: brightness(1.05);
+        }
+
+        /* AD SECTION */
+        .ad-section {
+            margin: 38px 0 14px;
+            padding: 22px;
+            border-radius: 18px;
+            border: 1px solid var(--line);
+            background: #09090c;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .ad-label {
+            color: #666873;
+            font-size: .68rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            margin-bottom: 10px;
+        }
+
         footer {
-            padding: 18px 0 28px;
+            margin-top: 45px;
+            border-top: 1px solid var(--line);
+            padding: 28px 0 38px;
+            color: #b7b7bf;
+            text-align: center;
+            font-size: .88rem;
+        }
+
+        footer a {
+            color: var(--red);
+            font-weight: 800;
+        }
+
+        @media (max-width: 767px) {
+            .hero { padding-top: 42px; }
+            .hero h1 { font-size: 2.6rem; }
+            .nav-link { margin-left: 0; }
         }
     </style>
 
-    <!-- Railway Variable: ADSTERRA_POPUNDER_CODE -->
+    <!-- Adsterra Popunder -->
     {{ADSTERRA_POPUNDER_CODE}}
 </head>
 
 <body>
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container">
-                <a class="navbar-brand" href="{{HOME_URL}}" style="color: red;">
-                    {{BRAND_NAME}}
-                </a>
 
-                <button class="navbar-toggler" type="button"
+    <nav class="navbar navbar-expand-lg navbar-dark site-nav">
+        <div class="container">
+            <a class="navbar-brand" href="{{HOME_URL}}">
+                {{BRAND_NAME}}<span>.</span>
+            </a>
+
+            <button class="navbar-toggler" type="button"
                     data-bs-toggle="collapse"
-                    data-bs-target="#navbarNav"
-                    aria-controls="navbarNav"
+                    data-bs-target="#mainNavbar"
+                    aria-controls="mainNavbar"
                     aria-expanded="false"
                     aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{HOME_URL}}" style="color: red;">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ABOUT_URL}}" style="color: red;">About</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{SERVICES_URL}}" style="color: red;">Services</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{CONTACT_URL}}" style="color: red;">Contact</a>
-                        </li>
-                    </ul>
-                </div>
+            <div class="collapse navbar-collapse" id="mainNavbar">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{HOME_URL}}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ABOUT_URL}}">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{SERVICES_URL}}">Services</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{CONTACT_URL}}">Contact</a>
+                    </li>
+                </ul>
             </div>
-        </nav>
-    </header>
+        </div>
+    </nav>
 
-    <div class="container mt-5 mx-auto">
-        <h1 class="text-center">{{PAGE_HEADING}}</h1>
-        <hr>
-
-        <section class="container mt-5">
-            <div class="row g-4">
-
-                <div class="col-md-4 text-center">
-                    <div class="video-card">
-                        <a href="{{PLAY_1_URL}}" rel="nofollow sponsored">
-                            <img src="{{IMAGE_1_URL}}" alt="Image 1" class="img-fluid">
-                        </a>
-                        <div class="btn-play-container mt-3">
-                            <a href="{{PLAY_1_URL}}"
-                               rel="nofollow sponsored"
-                               class="btn btn-danger btn-play btn-lg w-100">
-                                <i class="fas fa-play"></i> {{PLAY_BUTTON_TEXT}}
-                            </a>
-                        </div>
-                    </div>
+    <main>
+        <section class="hero">
+            <div class="container">
+                <div class="hero-badge">
+                    <i class="fa-solid fa-circle-play"></i>
+                    Featured Videos
                 </div>
 
-                <div class="col-md-4 text-center">
-                    <div class="video-card">
-                        <a href="{{PLAY_2_URL}}" rel="nofollow sponsored">
-                            <img src="{{IMAGE_2_URL}}" alt="Image 2" class="img-fluid">
-                        </a>
-                        <div class="btn-play-container mt-3">
-                            <a href="{{PLAY_2_URL}}"
-                               rel="nofollow sponsored"
-                               class="btn btn-danger btn-play btn-lg w-100">
-                                <i class="fas fa-play"></i> {{PLAY_BUTTON_TEXT}}
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-4 text-center">
-                    <div class="video-card">
-                        <a href="{{PLAY_3_URL}}" rel="nofollow sponsored">
-                            <img src="{{IMAGE_3_URL}}" alt="Image 3" class="img-fluid">
-                        </a>
-                        <div class="btn-play-container mt-3">
-                            <a href="{{PLAY_3_URL}}"
-                               rel="nofollow sponsored"
-                               class="btn btn-danger btn-play btn-lg w-100">
-                                <i class="fas fa-play"></i> {{PLAY_BUTTON_TEXT}}
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
+                <h1>{{PAGE_HEADING}} <span>Here</span></h1>
+                <p>{{SITE_DESCRIPTION}}</p>
             </div>
         </section>
 
-        <!-- Railway Variable: ADSTERRA_NATIVE_BANNER_CODE -->
-        <div class="native-ad-wrap">
-            {{ADSTERRA_NATIVE_BANNER_CODE}}
+        <section class="container pb-4">
+            <div class="section-title">
+                <h2>Latest Videos</h2>
+                <small>3 featured items</small>
+            </div>
+
+            <div class="row g-4">
+
+                <div class="col-lg-4 col-md-6">
+                    <article class="video-card">
+                        <a href="{{PLAY_1_URL}}" rel="nofollow sponsored">
+                            <div class="thumb-wrap">
+                                <img src="{{IMAGE_1_URL}}" alt="{{VIDEO_1_TITLE}}">
+                                <div class="play-overlay">
+                                    <div class="play-circle">
+                                        <i class="fa-solid fa-play"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+
+                        <div class="card-content">
+                            <div class="video-label">Featured</div>
+                            <h3 class="video-title">{{VIDEO_1_TITLE}}</h3>
+                            <div class="video-meta">
+                                <i class="fa-regular fa-circle-play"></i> Watch now
+                            </div>
+                            <a href="{{PLAY_1_URL}}" rel="nofollow sponsored" class="btn-watch">
+                                <i class="fa-solid fa-play"></i>
+                                {{PLAY_BUTTON_TEXT}}
+                            </a>
+                        </div>
+                    </article>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <article class="video-card">
+                        <a href="{{PLAY_2_URL}}" rel="nofollow sponsored">
+                            <div class="thumb-wrap">
+                                <img src="{{IMAGE_2_URL}}" alt="{{VIDEO_2_TITLE}}">
+                                <div class="play-overlay">
+                                    <div class="play-circle">
+                                        <i class="fa-solid fa-play"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+
+                        <div class="card-content">
+                            <div class="video-label">Popular</div>
+                            <h3 class="video-title">{{VIDEO_2_TITLE}}</h3>
+                            <div class="video-meta">
+                                <i class="fa-regular fa-circle-play"></i> Watch now
+                            </div>
+                            <a href="{{PLAY_2_URL}}" rel="nofollow sponsored" class="btn-watch">
+                                <i class="fa-solid fa-play"></i>
+                                {{PLAY_BUTTON_TEXT}}
+                            </a>
+                        </div>
+                    </article>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <article class="video-card">
+                        <a href="{{PLAY_3_URL}}" rel="nofollow sponsored">
+                            <div class="thumb-wrap">
+                                <img src="{{IMAGE_3_URL}}" alt="{{VIDEO_3_TITLE}}">
+                                <div class="play-overlay">
+                                    <div class="play-circle">
+                                        <i class="fa-solid fa-play"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+
+                        <div class="card-content">
+                            <div class="video-label">New</div>
+                            <h3 class="video-title">{{VIDEO_3_TITLE}}</h3>
+                            <div class="video-meta">
+                                <i class="fa-regular fa-circle-play"></i> Watch now
+                            </div>
+                            <a href="{{PLAY_3_URL}}" rel="nofollow sponsored" class="btn-watch">
+                                <i class="fa-solid fa-play"></i>
+                                {{PLAY_BUTTON_TEXT}}
+                            </a>
+                        </div>
+                    </article>
+                </div>
+
+            </div>
+
+            <!-- Adsterra Native Banner auto-renders here -->
+            <div class="ad-section">
+                <div class="ad-label">Advertisement</div>
+                {{ADSTERRA_NATIVE_BANNER_CODE}}
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            © {{FOOTER_YEAR}}
+            <a href="{{FOOTER_URL}}">{{FOOTER_NAME}}</a>.
+            All Rights Reserved.
         </div>
+    </footer>
 
-        <footer>
-            <p class="mb-0 text-center" style="color: white;">
-                © {{FOOTER_YEAR}}
-                <a href="{{FOOTER_URL}}" style="text-decoration: none; color: red;">
-                    {{FOOTER_NAME}}
-                </a>.
-                All Rights Reserved.
-            </p>
-        </footer>
-    </div>
-
-    <!-- Railway Variable: ADSTERRA_SOCIAL_BAR_CODE -->
+    <!-- Adsterra Social Bar auto-renders here -->
     {{ADSTERRA_SOCIAL_BAR_CODE}}
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
