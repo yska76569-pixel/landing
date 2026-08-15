@@ -6,6 +6,7 @@ const PORT = Number(process.env.PORT || 8080);
 const ROOT = __dirname;
 const INDEX = path.join(ROOT, "index.html");
 const IMAGES = path.join(ROOT, "images");
+const FAVICON = path.join(ROOT, "favicon.svg");
 
 function escapeHtml(value = "") {
   return String(value).replace(/[&<>"']/g, (ch) => ({
@@ -30,16 +31,28 @@ function raw(name) {
   return process.env[name] || "";
 }
 
-function renderPage() {
+function getCurrentBaseUrl(req) {
+  // Railway/custom-domain friendly auto detection.
+  const proto = String(req.headers["x-forwarded-proto"] || "https").split(",")[0].trim();
+  const host = String(req.headers["x-forwarded-host"] || req.headers.host || "").split(",")[0].trim();
+  return `${proto}://${host}`;
+}
+
+function renderPage(req, pathname) {
   let html = fs.readFileSync(INDEX, "utf8");
 
   const smartlink = String(process.env.SMARTLINK_URL || "").trim() || "#";
+  const currentUrl = `${getCurrentBaseUrl(req)}${pathname}`;
 
   const replacements = {
     SITE_TITLE: text("SITE_TITLE", "Click Here To Watch"),
     SITE_DESCRIPTION: text("SITE_DESCRIPTION", "Discover our latest featured videos. Tap any card to continue."),
     BRAND_NAME: text("BRAND_NAME", "Horny Baby"),
     PAGE_HEADING: text("PAGE_HEADING", "New Cool Video"),
+
+    PREVIEW_TITLE: text("PREVIEW_TITLE", process.env.SITE_TITLE || "Click Here To Watch"),
+    PREVIEW_DESCRIPTION: text("PREVIEW_DESCRIPTION", process.env.SITE_DESCRIPTION || "Discover our latest featured videos."),
+    CURRENT_URL: escapeHtml(currentUrl),
 
     VIDEO_1_TITLE: text("VIDEO_1_TITLE", "Featured Video 01"),
     VIDEO_2_TITLE: text("VIDEO_2_TITLE", "Featured Video 02"),
@@ -50,7 +63,7 @@ function renderPage() {
     PLAY_3_URL: escapeHtml(String(process.env.PLAY_3_URL || "").trim() || smartlink),
     PLAY_BUTTON_TEXT: text("PLAY_BUTTON_TEXT", "Play"),
 
-    HOME_URL: url("HOME_URL", "#"),
+    HOME_URL: url("HOME_URL", "/"),
     ABOUT_URL: url("ABOUT_URL", "#"),
     SERVICES_URL: url("SERVICES_URL", "#"),
     CONTACT_URL: url("CONTACT_URL", "#"),
@@ -71,6 +84,16 @@ function renderPage() {
   return html;
 }
 
+function serveFile(filePath, contentType, res, cache = "public, max-age=3600") {
+  if (!fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) return false;
+  res.writeHead(200, {
+    "Content-Type": contentType,
+    "Cache-Control": cache
+  });
+  fs.createReadStream(filePath).pipe(res);
+  return true;
+}
+
 function serveImage(pathname, res) {
   const filename = pathname.replace("/images/", "");
   if (!filename || filename.includes("/") || filename.includes("\\") || filename.includes("..")) {
@@ -78,10 +101,6 @@ function serveImage(pathname, res) {
   }
 
   const filePath = path.join(IMAGES, filename);
-  if (!fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {
-    return false;
-  }
-
   const ext = path.extname(filePath).toLowerCase();
   const types = {
     ".jpg": "image/jpeg",
@@ -92,12 +111,7 @@ function serveImage(pathname, res) {
     ".svg": "image/svg+xml"
   };
 
-  res.writeHead(200, {
-    "Content-Type": types[ext] || "application/octet-stream",
-    "Cache-Control": "public, max-age=3600"
-  });
-  fs.createReadStream(filePath).pipe(res);
-  return true;
+  return serveFile(filePath, types[ext] || "application/octet-stream", res);
 }
 
 const server = http.createServer((req, res) => {
@@ -108,18 +122,32 @@ const server = http.createServer((req, res) => {
     return res.end(JSON.stringify({ ok: true }));
   }
 
+  if (pathname === "/favicon.svg") {
+    if (serveFile(FAVICON, "image/svg+xml; charset=utf-8", res, "public, max-age=86400")) return;
+  }
+
   if (pathname.startsWith("/images/")) {
     if (serveImage(pathname, res)) return;
     res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
     return res.end("Image not found");
   }
 
-  if (pathname === "/" || pathname.startsWith("/rev/")) {
+  if (pathname === "/") {
     res.writeHead(200, {
       "Content-Type": "text/html; charset=utf-8",
       "Cache-Control": "no-store"
     });
-    return res.end(renderPage());
+    return res.end(renderPage(req, pathname));
+  }
+
+  // Unlimited friendly slugs.
+  // Anything like /rev/abc123, /rev/byux4n7, /rev/video-99 works.
+  if (/^\/rev\/[A-Za-z0-9_-]+\/?$/.test(pathname)) {
+    res.writeHead(200, {
+      "Content-Type": "text/html; charset=utf-8",
+      "Cache-Control": "no-store"
+    });
+    return res.end(renderPage(req, pathname));
   }
 
   res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
