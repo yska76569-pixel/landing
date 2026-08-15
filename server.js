@@ -3,7 +3,9 @@ const fs = require("fs");
 const path = require("path");
 
 const PORT = Number(process.env.PORT || 8080);
-const indexPath = path.join(__dirname, "index.html");
+const ROOT = __dirname;
+const INDEX = path.join(ROOT, "index.html");
+const IMAGES = path.join(ROOT, "images");
 
 function escapeHtml(value = "") {
   return String(value).replace(/[&<>"']/g, (ch) => ({
@@ -29,7 +31,7 @@ function raw(name) {
 }
 
 function renderPage() {
-  let html = fs.readFileSync(indexPath, "utf8");
+  let html = fs.readFileSync(INDEX, "utf8");
 
   const smartlink = String(process.env.SMARTLINK_URL || "").trim() || "#";
 
@@ -42,10 +44,6 @@ function renderPage() {
     VIDEO_1_TITLE: text("VIDEO_1_TITLE", "Featured Video 01"),
     VIDEO_2_TITLE: text("VIDEO_2_TITLE", "Featured Video 02"),
     VIDEO_3_TITLE: text("VIDEO_3_TITLE", "Featured Video 03"),
-
-    IMAGE_1_URL: url("IMAGE_1_URL", "https://placehold.co/900x560/111111/ff1838?text=Video+1"),
-    IMAGE_2_URL: url("IMAGE_2_URL", "https://placehold.co/900x560/111111/ff1838?text=Video+2"),
-    IMAGE_3_URL: url("IMAGE_3_URL", "https://placehold.co/900x560/111111/ff1838?text=Video+3"),
 
     PLAY_1_URL: escapeHtml(String(process.env.PLAY_1_URL || "").trim() || smartlink),
     PLAY_2_URL: escapeHtml(String(process.env.PLAY_2_URL || "").trim() || smartlink),
@@ -73,12 +71,47 @@ function renderPage() {
   return html;
 }
 
+function serveImage(pathname, res) {
+  const filename = pathname.replace("/images/", "");
+  if (!filename || filename.includes("/") || filename.includes("\\") || filename.includes("..")) {
+    return false;
+  }
+
+  const filePath = path.join(IMAGES, filename);
+  if (!fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {
+    return false;
+  }
+
+  const ext = path.extname(filePath).toLowerCase();
+  const types = {
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".png": "image/png",
+    ".webp": "image/webp",
+    ".gif": "image/gif",
+    ".svg": "image/svg+xml"
+  };
+
+  res.writeHead(200, {
+    "Content-Type": types[ext] || "application/octet-stream",
+    "Cache-Control": "public, max-age=3600"
+  });
+  fs.createReadStream(filePath).pipe(res);
+  return true;
+}
+
 const server = http.createServer((req, res) => {
-  const pathname = (req.url || "/").split("?")[0];
+  const pathname = decodeURIComponent((req.url || "/").split("?")[0]);
 
   if (pathname === "/health") {
     res.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
     return res.end(JSON.stringify({ ok: true }));
+  }
+
+  if (pathname.startsWith("/images/")) {
+    if (serveImage(pathname, res)) return;
+    res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
+    return res.end("Image not found");
   }
 
   if (pathname === "/" || pathname.startsWith("/rev/")) {
