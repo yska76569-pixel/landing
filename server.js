@@ -15,11 +15,11 @@ function escapeHtml(value = "") {
   })[ch]);
 }
 
-function safeText(name, fallback = "") {
+function text(name, fallback = "") {
   return escapeHtml(process.env[name] || fallback);
 }
 
-function safeUrl(name, fallback = "#") {
+function url(name, fallback = "#") {
   const value = String(process.env[name] || fallback).trim();
   return escapeHtml(value || fallback);
 }
@@ -28,33 +28,38 @@ function raw(name) {
   return process.env[name] || "";
 }
 
-function renderIndex() {
+function renderPage() {
   let html = fs.readFileSync(indexPath, "utf8");
 
   const smartlink = String(process.env.SMARTLINK_URL || "").trim() || "#";
 
   const replacements = {
-    SITE_TITLE: safeText("SITE_TITLE", "Click Here To watch"),
-    BRAND_NAME: safeText("BRAND_NAME", "Horny Baby"),
-    PAGE_HEADING: safeText("PAGE_HEADING", "New Cool Video Here"),
+    SITE_TITLE: text("SITE_TITLE", "Click Here To Watch"),
+    SITE_DESCRIPTION: text("SITE_DESCRIPTION", "Discover our latest featured videos. Tap any card to continue."),
+    BRAND_NAME: text("BRAND_NAME", "Horny Baby"),
+    PAGE_HEADING: text("PAGE_HEADING", "New Cool Video"),
 
-    IMAGE_1_URL: safeUrl("IMAGE_1_URL", "https://shinana.geetika.site/adsterrapic/1.jpg"),
-    IMAGE_2_URL: safeUrl("IMAGE_2_URL", "https://shinana.geetika.site/adsterrapic/2.jpg"),
-    IMAGE_3_URL: safeUrl("IMAGE_3_URL", "https://shinana.geetika.site/adsterrapic/3.jpg"),
+    VIDEO_1_TITLE: text("VIDEO_1_TITLE", "Featured Video 01"),
+    VIDEO_2_TITLE: text("VIDEO_2_TITLE", "Featured Video 02"),
+    VIDEO_3_TITLE: text("VIDEO_3_TITLE", "Featured Video 03"),
+
+    IMAGE_1_URL: url("IMAGE_1_URL", "https://placehold.co/900x560/111111/ff1838?text=Video+1"),
+    IMAGE_2_URL: url("IMAGE_2_URL", "https://placehold.co/900x560/111111/ff1838?text=Video+2"),
+    IMAGE_3_URL: url("IMAGE_3_URL", "https://placehold.co/900x560/111111/ff1838?text=Video+3"),
 
     PLAY_1_URL: escapeHtml(String(process.env.PLAY_1_URL || "").trim() || smartlink),
     PLAY_2_URL: escapeHtml(String(process.env.PLAY_2_URL || "").trim() || smartlink),
     PLAY_3_URL: escapeHtml(String(process.env.PLAY_3_URL || "").trim() || smartlink),
-    PLAY_BUTTON_TEXT: safeText("PLAY_BUTTON_TEXT", "Play"),
+    PLAY_BUTTON_TEXT: text("PLAY_BUTTON_TEXT", "Play"),
 
-    HOME_URL: safeUrl("HOME_URL", "#"),
-    ABOUT_URL: safeUrl("ABOUT_URL", "#"),
-    SERVICES_URL: safeUrl("SERVICES_URL", "#"),
-    CONTACT_URL: safeUrl("CONTACT_URL", "#"),
+    HOME_URL: url("HOME_URL", "#"),
+    ABOUT_URL: url("ABOUT_URL", "#"),
+    SERVICES_URL: url("SERVICES_URL", "#"),
+    CONTACT_URL: url("CONTACT_URL", "#"),
 
-    FOOTER_YEAR: safeText("FOOTER_YEAR", "2026"),
-    FOOTER_NAME: safeText("FOOTER_NAME", "THIS PERSON IS BRAND"),
-    FOOTER_URL: safeUrl("FOOTER_URL", "#"),
+    FOOTER_YEAR: text("FOOTER_YEAR", "2026"),
+    FOOTER_NAME: text("FOOTER_NAME", "THIS PERSON IS BRAND"),
+    FOOTER_URL: url("FOOTER_URL", "#"),
 
     ADSTERRA_POPUNDER_CODE: raw("ADSTERRA_POPUNDER_CODE"),
     ADSTERRA_NATIVE_BANNER_CODE: raw("ADSTERRA_NATIVE_BANNER_CODE"),
@@ -81,7 +86,7 @@ const server = http.createServer((req, res) => {
       "Content-Type": "text/html; charset=utf-8",
       "Cache-Control": "no-store"
     });
-    return res.end(renderIndex());
+    return res.end(renderPage());
   }
 
   res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
