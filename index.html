@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>{{SITE_TITLE}}</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <style>
+        body {
+            background-color: black;
+            color: red;
+            min-height: 100vh;
+        }
+
+        header {
+            color: red;
+        }
+
+        .img-fluid {
+            max-width: 500px;
+            max-height: 500px;
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .video-card {
+            background: #101010;
+            border: 1px solid #2a2a2a;
+            border-radius: 14px;
+            padding: 14px;
+            height: 100%;
+        }
+
+        .btn-play {
+            font-weight: 700;
+        }
+
+        .native-ad-wrap {
+            margin: 28px auto;
+            padding: 14px;
+            max-width: 1100px;
+            text-align: center;
+        }
+
+        footer {
+            padding: 18px 0 28px;
+        }
+    </style>
+
+    <!-- Railway Variable: ADSTERRA_POPUNDER_CODE -->
+    {{ADSTERRA_POPUNDER_CODE}}
+</head>
+
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" href="{{HOME_URL}}" style="color: red;">
+                    {{BRAND_NAME}}
+                </a>
+
+                <button class="navbar-toggler" type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarNav"
+                    aria-controls="navbarNav"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{HOME_URL}}" style="color: red;">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ABOUT_URL}}" style="color: red;">About</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{SERVICES_URL}}" style="color: red;">Services</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{CONTACT_URL}}" style="color: red;">Contact</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container mt-5 mx-auto">
+        <h1 class="text-center">{{PAGE_HEADING}}</h1>
+        <hr>
+
+        <section class="container mt-5">
+            <div class="row g-4">
+
+                <div class="col-md-4 text-center">
+                    <div class="video-card">
+                        <a href="{{PLAY_1_URL}}" rel="nofollow sponsored">
+                            <img src="{{IMAGE_1_URL}}" alt="Image 1" class="img-fluid">
+                        </a>
+                        <div class="btn-play-container mt-3">
+                            <a href="{{PLAY_1_URL}}"
+                               rel="nofollow sponsored"
+                               class="btn btn-danger btn-play btn-lg w-100">
+                                <i class="fas fa-play"></i> {{PLAY_BUTTON_TEXT}}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 text-center">
+                    <div class="video-card">
+                        <a href="{{PLAY_2_URL}}" rel="nofollow sponsored">
+                            <img src="{{IMAGE_2_URL}}" alt="Image 2" class="img-fluid">
+                        </a>
+                        <div class="btn-play-container mt-3">
+                            <a href="{{PLAY_2_URL}}"
+                               rel="nofollow sponsored"
+                               class="btn btn-danger btn-play btn-lg w-100">
+                                <i class="fas fa-play"></i> {{PLAY_BUTTON_TEXT}}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 text-center">
+                    <div class="video-card">
+                        <a href="{{PLAY_3_URL}}" rel="nofollow sponsored">
+                            <img src="{{IMAGE_3_URL}}" alt="Image 3" class="img-fluid">
+                        </a>
+                        <div class="btn-play-container mt-3">
+                            <a href="{{PLAY_3_URL}}"
+                               rel="nofollow sponsored"
+                               class="btn btn-danger btn-play btn-lg w-100">
+                                <i class="fas fa-play"></i> {{PLAY_BUTTON_TEXT}}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Railway Variable: ADSTERRA_NATIVE_BANNER_CODE -->
+        <div class="native-ad-wrap">
+            {{ADSTERRA_NATIVE_BANNER_CODE}}
+        </div>
+
+        <footer>
+            <p class="mb-0 text-center" style="color: white;">
+                © {{FOOTER_YEAR}}
+                <a href="{{FOOTER_URL}}" style="text-decoration: none; color: red;">
+                    {{FOOTER_NAME}}
+                </a>.
+                All Rights Reserved.
+            </p>
+        </footer>
+    </div>
+
+    <!-- Railway Variable: ADSTERRA_SOCIAL_BAR_CODE -->
+    {{ADSTERRA_SOCIAL_BAR_CODE}}
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && (e.key.toLowerCase() === 's' || e.key.toLowerCase() === 'u')) {
+                e.preventDefault();
+            }
+        });
+
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+    </script>
+</body>
+</html>
