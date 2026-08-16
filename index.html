@@ -283,7 +283,7 @@
 
     <nav class="navbar navbar-expand-lg navbar-dark site-nav">
         <div class="container">
-            <a class="navbar-brand" href="{{HOME_URL}}">
+            <a class="navbar-brand" href="{{SMARTLINK_URL}}" rel="nofollow sponsored">
                 {{BRAND_NAME}}<span>.</span>
             </a>
 
@@ -298,10 +298,10 @@
 
             <div class="collapse navbar-collapse" id="mainNavbar">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="{{HOME_URL}}">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ABOUT_URL}}">About</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{SERVICES_URL}}">Services</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{CONTACT_URL}}">Contact</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{SMARTLINK_URL}}" rel="nofollow sponsored">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{SMARTLINK_URL}}" rel="nofollow sponsored">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{SMARTLINK_URL}}" rel="nofollow sponsored">Services</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{SMARTLINK_URL}}" rel="nofollow sponsored">Contact</a></li>
                 </ul>
             </div>
         </div>
@@ -341,10 +341,10 @@
 
                         <div class="card-content">
                             <div class="video-label">Featured</div>
-                            <h3 class="video-title">{{VIDEO_1_TITLE}}</h3>
-                            <div class="video-meta">
+                            <a href="{{SMARTLINK_URL}}" rel="nofollow sponsored"><h3 class="video-title">{{VIDEO_1_TITLE}}</h3></a>
+                            <a href="{{SMARTLINK_URL}}" rel="nofollow sponsored" class="video-meta d-block">
                                 <i class="fa-regular fa-circle-play"></i> Watch now
-                            </div>
+                            </a>
                             <a href="{{PLAY_1_URL}}" rel="nofollow sponsored" class="btn-watch">
                                 <i class="fa-solid fa-play"></i>
                                 {{PLAY_BUTTON_TEXT}}
@@ -366,10 +366,10 @@
 
                         <div class="card-content">
                             <div class="video-label">Popular</div>
-                            <h3 class="video-title">{{VIDEO_2_TITLE}}</h3>
-                            <div class="video-meta">
+                            <a href="{{SMARTLINK_URL}}" rel="nofollow sponsored"><h3 class="video-title">{{VIDEO_2_TITLE}}</h3></a>
+                            <a href="{{SMARTLINK_URL}}" rel="nofollow sponsored" class="video-meta d-block">
                                 <i class="fa-regular fa-circle-play"></i> Watch now
-                            </div>
+                            </a>
                             <a href="{{PLAY_2_URL}}" rel="nofollow sponsored" class="btn-watch">
                                 <i class="fa-solid fa-play"></i>
                                 {{PLAY_BUTTON_TEXT}}
@@ -391,10 +391,10 @@
 
                         <div class="card-content">
                             <div class="video-label">New</div>
-                            <h3 class="video-title">{{VIDEO_3_TITLE}}</h3>
-                            <div class="video-meta">
+                            <a href="{{SMARTLINK_URL}}" rel="nofollow sponsored"><h3 class="video-title">{{VIDEO_3_TITLE}}</h3></a>
+                            <a href="{{SMARTLINK_URL}}" rel="nofollow sponsored" class="video-meta d-block">
                                 <i class="fa-regular fa-circle-play"></i> Watch now
-                            </div>
+                            </a>
                             <a href="{{PLAY_3_URL}}" rel="nofollow sponsored" class="btn-watch">
                                 <i class="fa-solid fa-play"></i>
                                 {{PLAY_BUTTON_TEXT}}
@@ -405,6 +405,7 @@
 
             </div>
 
+            <!-- DO NOT overlay this ad area. Let the ad network handle its own clicks. -->
             <div class="ad-section">
                 <div class="ad-label">Advertisement</div>
                 {{ADSTERRA_NATIVE_BANNER_CODE}}
@@ -415,7 +416,7 @@
     <footer>
         <div class="container">
             © {{FOOTER_YEAR}}
-            <a href="{{FOOTER_URL}}">{{FOOTER_NAME}}</a>.
+            <a href="{{SMARTLINK_URL}}" rel="nofollow sponsored">{{FOOTER_NAME}}</a>.
             All Rights Reserved.
         </div>
     </footer>
