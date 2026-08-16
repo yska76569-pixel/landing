@@ -7,6 +7,9 @@ const ROOT = __dirname;
 const INDEX = path.join(ROOT, "index.html");
 const IMAGES = path.join(ROOT, "images");
 
+const MAX_IMAGES = 15;
+const SUPPORTED_EXTENSIONS = [".jpg", ".jpeg", ".png", ".webp", ".gif"];
+
 function escapeHtml(value = "") {
   return String(value).replace(/[&<>"']/g, (ch) => ({
     "&": "&amp;",
@@ -21,20 +24,90 @@ function text(name, fallback = "") {
   return escapeHtml(process.env[name] || fallback);
 }
 
-function url(name, fallback = "#") {
-  const value = String(process.env[name] || fallback).trim();
-  return escapeHtml(value || fallback);
-}
-
 function raw(name) {
   return process.env[name] || "";
 }
 
 function getCurrentBaseUrl(req) {
-  // Railway/custom-domain friendly auto detection.
   const proto = String(req.headers["x-forwarded-proto"] || "https").split(",")[0].trim();
   const host = String(req.headers["x-forwarded-host"] || req.headers.host || "").split(",")[0].trim();
   return `${proto}://${host}`;
+}
+
+function findExistingImage(number) {
+  for (const ext of SUPPORTED_EXTENSIONS) {
+    const filename = `${number}${ext}`;
+    const filePath = path.join(IMAGES, filename);
+    if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+      return filename;
+    }
+  }
+  return null;
+}
+
+function getAvailableImages() {
+  const found = [];
+  for (let i = 1; i <= MAX_IMAGES; i++) {
+    const filename = findExistingImage(i);
+    if (filename) {
+      found.push({ number: i, filename });
+    }
+  }
+  return found;
+}
+
+function getVideoTitle(number) {
+  return text(`VIDEO_${number}_TITLE`, `Featured Video ${String(number).padStart(2, "0")}`);
+}
+
+function getVideoLabel(index) {
+  const labels = ["Featured", "Popular", "New"];
+  return labels[index % labels.length];
+}
+
+function buildVideoCards(images, smartlink) {
+  return images.map((img, index) => {
+    const title = getVideoTitle(img.number);
+    const label = getVideoLabel(index);
+    const imageUrl = `/images/${encodeURIComponent(img.filename)}`;
+
+    return `
+                <div class="col-lg-4 col-md-6">
+                    <article class="video-card">
+                        <a href="${escapeHtml(smartlink)}" rel="nofollow sponsored">
+                            <div class="thumb-wrap">
+                                <img src="${imageUrl}" alt="${title}">
+                                <div class="play-overlay">
+                                    <div class="play-circle">
+                                        <i class="fa-solid fa-play"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+
+                        <div class="card-content">
+                            <div class="video-label">${label}</div>
+
+                            <a href="${escapeHtml(smartlink)}" rel="nofollow sponsored">
+                                <h3 class="video-title">${title}</h3>
+                            </a>
+
+                            <a href="${escapeHtml(smartlink)}"
+                               rel="nofollow sponsored"
+                               class="video-meta d-block">
+                                <i class="fa-regular fa-circle-play"></i> Watch now
+                            </a>
+
+                            <a href="${escapeHtml(smartlink)}"
+                               rel="nofollow sponsored"
+                               class="btn-watch">
+                                <i class="fa-solid fa-play"></i>
+                                ${text("PLAY_BUTTON_TEXT", "Play")}
+                            </a>
+                        </div>
+                    </article>
+                </div>`;
+  }).join("\n");
 }
 
 function renderPage(req, pathname) {
@@ -42,6 +115,7 @@ function renderPage(req, pathname) {
 
   const smartlink = String(process.env.SMARTLINK_URL || "").trim() || "#";
   const currentUrl = `${getCurrentBaseUrl(req)}${pathname}`;
+  const images = getAvailableImages();
 
   const replacements = {
     SITE_TITLE: text("SITE_TITLE", "Click Here To Watch"),
@@ -53,25 +127,15 @@ function renderPage(req, pathname) {
     PREVIEW_DESCRIPTION: text("PREVIEW_DESCRIPTION", process.env.SITE_DESCRIPTION || "Discover our latest featured videos."),
     CURRENT_URL: escapeHtml(currentUrl),
 
-    VIDEO_1_TITLE: text("VIDEO_1_TITLE", "Featured Video 01"),
-    VIDEO_2_TITLE: text("VIDEO_2_TITLE", "Featured Video 02"),
-    VIDEO_3_TITLE: text("VIDEO_3_TITLE", "Featured Video 03"),
-
     SMARTLINK_URL: escapeHtml(smartlink),
 
-    PLAY_1_URL: escapeHtml(String(process.env.PLAY_1_URL || "").trim() || smartlink),
-    PLAY_2_URL: escapeHtml(String(process.env.PLAY_2_URL || "").trim() || smartlink),
-    PLAY_3_URL: escapeHtml(String(process.env.PLAY_3_URL || "").trim() || smartlink),
-    PLAY_BUTTON_TEXT: text("PLAY_BUTTON_TEXT", "Play"),
+    VIDEO_CARDS: buildVideoCards(images, smartlink),
+    VIDEO_COUNT_TEXT: `${images.length} featured item${images.length === 1 ? "" : "s"}`,
 
-    HOME_URL: url("HOME_URL", "/"),
-    ABOUT_URL: url("ABOUT_URL", "#"),
-    SERVICES_URL: url("SERVICES_URL", "#"),
-    CONTACT_URL: url("CONTACT_URL", "#"),
+    PLAY_BUTTON_TEXT: text("PLAY_BUTTON_TEXT", "Play"),
 
     FOOTER_YEAR: text("FOOTER_YEAR", "2026"),
     FOOTER_NAME: text("FOOTER_NAME", "THIS PERSON IS BRAND"),
-    FOOTER_URL: url("FOOTER_URL", "#"),
 
     ADSTERRA_POPUNDER_CODE: raw("ADSTERRA_POPUNDER_CODE"),
     ADSTERRA_NATIVE_BANNER_CODE: raw("ADSTERRA_NATIVE_BANNER_CODE"),
@@ -85,16 +149,6 @@ function renderPage(req, pathname) {
   return html;
 }
 
-function serveFile(filePath, contentType, res, cache = "public, max-age=3600") {
-  if (!fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) return false;
-  res.writeHead(200, {
-    "Content-Type": contentType,
-    "Cache-Control": cache
-  });
-  fs.createReadStream(filePath).pipe(res);
-  return true;
-}
-
 function serveImage(pathname, res) {
   const filename = pathname.replace("/images/", "");
   if (!filename || filename.includes("/") || filename.includes("\\") || filename.includes("..")) {
@@ -102,17 +156,25 @@ function serveImage(pathname, res) {
   }
 
   const filePath = path.join(IMAGES, filename);
+  if (!fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {
+    return false;
+  }
+
   const ext = path.extname(filePath).toLowerCase();
   const types = {
     ".jpg": "image/jpeg",
     ".jpeg": "image/jpeg",
     ".png": "image/png",
     ".webp": "image/webp",
-    ".gif": "image/gif",
-    ".svg": "image/svg+xml"
+    ".gif": "image/gif"
   };
 
-  return serveFile(filePath, types[ext] || "application/octet-stream", res);
+  res.writeHead(200, {
+    "Content-Type": types[ext] || "application/octet-stream",
+    "Cache-Control": "public, max-age=3600"
+  });
+  fs.createReadStream(filePath).pipe(res);
+  return true;
 }
 
 const server = http.createServer((req, res) => {
@@ -120,7 +182,10 @@ const server = http.createServer((req, res) => {
 
   if (pathname === "/health") {
     res.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
-    return res.end(JSON.stringify({ ok: true }));
+    return res.end(JSON.stringify({
+      ok: true,
+      images: getAvailableImages().map(x => x.filename)
+    }));
   }
 
   if (pathname.startsWith("/images/")) {
@@ -129,17 +194,7 @@ const server = http.createServer((req, res) => {
     return res.end("Image not found");
   }
 
-  if (pathname === "/") {
-    res.writeHead(200, {
-      "Content-Type": "text/html; charset=utf-8",
-      "Cache-Control": "no-store"
-    });
-    return res.end(renderPage(req, pathname));
-  }
-
-  // Unlimited friendly slugs.
-  // Anything like /rev/abc123, /rev/byux4n7, /rev/video-99 works.
-  if (/^\/rev\/[A-Za-z0-9_-]+\/?$/.test(pathname)) {
+  if (pathname === "/" || /^\/rev\/[A-Za-z0-9_-]+\/?$/.test(pathname)) {
     res.writeHead(200, {
       "Content-Type": "text/html; charset=utf-8",
       "Cache-Control": "no-store"
@@ -153,4 +208,5 @@ const server = http.createServer((req, res) => {
 
 server.listen(PORT, "0.0.0.0", () => {
   console.log(`Landing page running on port ${PORT}`);
+  console.log("Detected images:", getAvailableImages().map(x => x.filename).join(", ") || "none");
 });
