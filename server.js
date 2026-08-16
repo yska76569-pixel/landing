@@ -60,6 +60,20 @@ function getVideoTitle(number) {
   return text(`VIDEO_${number}_TITLE`, `Featured Video ${String(number).padStart(2, "0")}`);
 }
 
+function getVideoViews(number) {
+  // Optional manual override from Railway:
+  // VIDEO_1_VIEWS=7.8M
+  const manual = String(process.env[`VIDEO_${number}_VIEWS`] || "").trim();
+  if (manual) return escapeHtml(manual);
+
+  // Stable "random-looking" value from 1.2M to 9.9M.
+  // The same card keeps the same view count across refreshes.
+  const seed = (number * 73 + 41) % 88; // 0..87
+  const value = 1.2 + (seed / 10);
+  const clamped = Math.min(value, 9.9);
+  return `${clamped.toFixed(1)}M`;
+}
+
 function getVideoLabel(index) {
   const labels = ["Featured", "Popular", "New"];
   return labels[index % labels.length];
@@ -68,6 +82,7 @@ function getVideoLabel(index) {
 function buildVideoCards(images, smartlink) {
   return images.map((img, index) => {
     const title = getVideoTitle(img.number);
+    const views = getVideoViews(img.number);
     const label = getVideoLabel(index);
     const imageUrl = `/images/${encodeURIComponent(img.filename)}`;
 
@@ -96,6 +111,8 @@ function buildVideoCards(images, smartlink) {
                                rel="nofollow sponsored"
                                class="video-meta d-block">
                                 <i class="fa-regular fa-circle-play"></i> Watch now
+                                <span style="margin:0 7px;opacity:.55;">•</span>
+                                <i class="fa-regular fa-eye"></i> ${views} views
                             </a>
 
                             <a href="${escapeHtml(smartlink)}"
