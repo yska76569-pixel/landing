@@ -57,6 +57,8 @@ function renderPage(req, pathname) {
     VIDEO_2_TITLE: text("VIDEO_2_TITLE", "Featured Video 02"),
     VIDEO_3_TITLE: text("VIDEO_3_TITLE", "Featured Video 03"),
 
+    SMARTLINK_URL: escapeHtml(smartlink),
+
     PLAY_1_URL: escapeHtml(String(process.env.PLAY_1_URL || "").trim() || smartlink),
     PLAY_2_URL: escapeHtml(String(process.env.PLAY_2_URL || "").trim() || smartlink),
     PLAY_3_URL: escapeHtml(String(process.env.PLAY_3_URL || "").trim() || smartlink),
