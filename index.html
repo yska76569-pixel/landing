@@ -323,86 +323,11 @@
         <section class="container pb-4">
             <div class="section-title">
                 <h2>Latest Videos</h2>
-                <small>3 featured items</small>
+                <small>{{VIDEO_COUNT_TEXT}}</small>
             </div>
 
             <div class="row g-4">
-
-                <div class="col-lg-4 col-md-6">
-                    <article class="video-card">
-                        <a href="{{PLAY_1_URL}}" rel="nofollow sponsored">
-                            <div class="thumb-wrap">
-                                <img src="/images/1.jpg" alt="{{VIDEO_1_TITLE}}">
-                                <div class="play-overlay">
-                                    <div class="play-circle"><i class="fa-solid fa-play"></i></div>
-                                </div>
-                            </div>
-                        </a>
-
-                        <div class="card-content">
-                            <div class="video-label">Featured</div>
-                            <a href="{{SMARTLINK_URL}}" rel="nofollow sponsored"><h3 class="video-title">{{VIDEO_1_TITLE}}</h3></a>
-                            <a href="{{SMARTLINK_URL}}" rel="nofollow sponsored" class="video-meta d-block">
-                                <i class="fa-regular fa-circle-play"></i> Watch now
-                            </a>
-                            <a href="{{PLAY_1_URL}}" rel="nofollow sponsored" class="btn-watch">
-                                <i class="fa-solid fa-play"></i>
-                                {{PLAY_BUTTON_TEXT}}
-                            </a>
-                        </div>
-                    </article>
-                </div>
-
-                <div class="col-lg-4 col-md-6">
-                    <article class="video-card">
-                        <a href="{{PLAY_2_URL}}" rel="nofollow sponsored">
-                            <div class="thumb-wrap">
-                                <img src="/images/2.jpg" alt="{{VIDEO_2_TITLE}}">
-                                <div class="play-overlay">
-                                    <div class="play-circle"><i class="fa-solid fa-play"></i></div>
-                                </div>
-                            </div>
-                        </a>
-
-                        <div class="card-content">
-                            <div class="video-label">Popular</div>
-                            <a href="{{SMARTLINK_URL}}" rel="nofollow sponsored"><h3 class="video-title">{{VIDEO_2_TITLE}}</h3></a>
-                            <a href="{{SMARTLINK_URL}}" rel="nofollow sponsored" class="video-meta d-block">
-                                <i class="fa-regular fa-circle-play"></i> Watch now
-                            </a>
-                            <a href="{{PLAY_2_URL}}" rel="nofollow sponsored" class="btn-watch">
-                                <i class="fa-solid fa-play"></i>
-                                {{PLAY_BUTTON_TEXT}}
-                            </a>
-                        </div>
-                    </article>
-                </div>
-
-                <div class="col-lg-4 col-md-6">
-                    <article class="video-card">
-                        <a href="{{PLAY_3_URL}}" rel="nofollow sponsored">
-                            <div class="thumb-wrap">
-                                <img src="/images/3.jpg" alt="{{VIDEO_3_TITLE}}">
-                                <div class="play-overlay">
-                                    <div class="play-circle"><i class="fa-solid fa-play"></i></div>
-                                </div>
-                            </div>
-                        </a>
-
-                        <div class="card-content">
-                            <div class="video-label">New</div>
-                            <a href="{{SMARTLINK_URL}}" rel="nofollow sponsored"><h3 class="video-title">{{VIDEO_3_TITLE}}</h3></a>
-                            <a href="{{SMARTLINK_URL}}" rel="nofollow sponsored" class="video-meta d-block">
-                                <i class="fa-regular fa-circle-play"></i> Watch now
-                            </a>
-                            <a href="{{PLAY_3_URL}}" rel="nofollow sponsored" class="btn-watch">
-                                <i class="fa-solid fa-play"></i>
-                                {{PLAY_BUTTON_TEXT}}
-                            </a>
-                        </div>
-                    </article>
-                </div>
-
+                {{VIDEO_CARDS}}
             </div>
 
             <!-- DO NOT overlay this ad area. Let the ad network handle its own clicks. -->
