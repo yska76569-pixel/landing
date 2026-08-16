@@ -6,7 +6,6 @@ const PORT = Number(process.env.PORT || 8080);
 const ROOT = __dirname;
 const INDEX = path.join(ROOT, "index.html");
 const IMAGES = path.join(ROOT, "images");
-const FAVICON = path.join(ROOT, "favicon.svg");
 
 function escapeHtml(value = "") {
   return String(value).replace(/[&<>"']/g, (ch) => ({
@@ -120,10 +119,6 @@ const server = http.createServer((req, res) => {
   if (pathname === "/health") {
     res.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
     return res.end(JSON.stringify({ ok: true }));
-  }
-
-  if (pathname === "/favicon.svg") {
-    if (serveFile(FAVICON, "image/svg+xml; charset=utf-8", res, "public, max-age=86400")) return;
   }
 
   if (pathname.startsWith("/images/")) {
